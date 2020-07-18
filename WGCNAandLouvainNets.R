@@ -18,4 +18,4 @@ communitiesLouvain = cluster_louvain(graphAMP.PD)
 netLouvain = NULL
 netLouvain$moduleColors = WGCNA::labels2colors(communitiesLouvain$membership) # We add a color for each different community found
 names(netLouvain$moduleColors) = communitiesLouvain$names # We name them
-saveRDS(object = netLOu20M, file = "LouvainNet20M.rds") # We save the net
+saveRDS(object = netLouvain, file = "LouvainNet20M.rds") # We save the net
