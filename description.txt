@@ -1,0 +1,64 @@
+Here we describe the function stored on each R file.
+
+-ParallelMakeAdjacentGenesGraph.R
+This file contains the function that creates a graph from the genes' adjacency matrix.
+As a first step, given a data frame having genes as columns and samples as rows, the
+adjacency matrix is calculated according to the best beta value.
+Once we have the adjacency matrix, a cluster is set up to parallelize the process.
+The adjacency matrix is ordered and filled up with -1 above the diagonal. This is done
+because an adjacency matrix is a squared matrix, so lower part of the diagonal is equal
+to the upper part of the diagonal and we do not want to repeat combinations of genes.
+Therefore, when we decreasingly order the indexes of the adjacency matrix on an
+unidimensional array, this negative values will be stored at the end and they will never
+accessed when we iterate.
+Once we have it ordered, we divide the given set of arcs (parameter of the function)
+in 5 different subsets, which allow us to process each iteration on a core of the cluster
+we just created. On each cluster, we calculate the edges ( pair of genes) and the weight
+associated with each edge (the weight of the arcs formed by two edges)
+Finally, we merge all the measures, and we use them to calculate the graph from which we 
+later can find communities and develop a network.
+
+
+-SequentialMakeAdjacenGenesGraph.R
+It is based on the same strategy as the function we just described above but it does not
+create a cluster to parallelize the process. In the end, this one is more time consuming than
+the previous one, so it is less efficient when we aim to create graphs based on real-world
+problems.
+
+
+- WGCNAandLouvainNets.R
+In this file, we do not store a function but we want to illustrate the strategy we used to 
+create WGCNA and Louvain networks.
+
+
+-SNPsGraphOMAFsAll.R
+In this file, we show the function used to create the graph from genetic variants dataset
+We separate the input data in cases and controls, we calculate OMAFs for each SNP, and
+we filter them according to those SNPs that have a value greater than the MAF threshold.
+Then we calculate JOMAFs, comparing all possible pairs of SNPs, and we select those pairs
+of SNPs whose JOMAF value is greater than the JMOMAF threshold. We just set up these two
+thresholds to get rid of rare mutations. Then we use the JOMAFs values for each pair of SNPs
+together with the names of the SNPs to make the graph.
+This function though was not possible to efficiently be run. It was due to the process was costly, as it had to compare many millions of SNPs.
+
+Because of the limitations we faced with this process, we had to develop three different 
+functions based on three different strategies.
+
+
+-SNPsGraphOMAFsHigh.R
+This function only considers the number of SNPs given as input. So, once we remove rare
+mutation according to OMAFs and MAF threshold, we order all OMAFs measures and we select
+a determined number of SNPs that will be the ones with the highest OMAFs, as we decreasingly
+ordered them. Later we calculate JOMAFs to make the graph.
+
+
+-SNPsGraphOMAFsLow.R
+This function increasingly orders all OMAFs to select a determined number of SNPs
+given as input. This time SNPs selected will be the ones with the lowest OMAFs, as we 
+increasingly ordered them. Later we calculate JOMAFs to make the graph.
+
+
+-SNPsGraphOMAFsRandom.R
+This function randomly selects a determined number of SNPs given as input, once we removed
+the rare mutations according to OMAFs values.
+
