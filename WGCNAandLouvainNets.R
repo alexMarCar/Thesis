@@ -18,4 +18,10 @@ communitiesLouvain = cluster_louvain(graphAMP.PD)
 netLouvain = NULL
 netLouvain$moduleColors = WGCNA::labels2colors(communitiesLouvain$membership) # We add a color for each different community found
 names(netLouvain$moduleColors) = communitiesLouvain$names # We name them
+#And now the eigengenes
+MEs = WGCNA::moduleEigengenes(AMPPDdata,
+                                   colors = netLouvain$moduleColors,
+                                   excludeGrey=F)
+netLouvain$MEs = data.frame(MEs$eigengenes)
+
 saveRDS(object = netLouvain, file = "LouvainNet20M.rds") # We save the net
